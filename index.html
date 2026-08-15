@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Don's Portfolio</title>
+
+  <meta name="theme-color" content="#0b1020">
+  <link rel="icon" href="public/favicon.svg" type="image/x-icon">
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="bg"></div>
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+  <header class="site-header">
+    <a class="logo" href="#home">CORE<span>_SYSTEM</span></a>
+
+    <nav class="nav" id="nav">
+      <a href="#home" class="gradient-1">Home</a>
+      <a href="#about" class="gradient-1">About</a>
+      <a href="#projects" class="gradient-1">Projects</a>
+      <a href="#blog" class="gradient-1">Blog</a>
+      <a href="#contact" class="gradient-1">Contact</a>
+      <a href="#resume" class="gradient-1">Resume</a>
+    </nav>
+
+    <div class="header-actions">
+      <div class="theme-switcher" role="group" aria-label="Color theme">
+        <button class="theme-button" type="button" data-theme="light" aria-label="Use light theme" title="Light theme">☀️</button>
+        <button class="theme-button is-active" type="button" data-theme="system" aria-label="Use system theme" title="System theme">🌓</button>
+        <button class="theme-button" type="button" data-theme="dark" aria-label="Use dark theme" title="Dark theme">🌙</button>
+      </div>
+      <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      ☰
+      </button>
+    </div>
+  </header>
+
+  <main >
+    <section id="home" class="hero">
+      <h1 class="neon">DØÑ RÏÇHY</h1>
+      <h2 class="gradient-1">Security-Minded Software & Game Developer Enthusiast</h2>
+      <h1 class="neon-2 "><span class="g1">Building Systems</span><br>Securing the <span class="gradient">Digital Frontier</span></h1>
+      <p class="subtitle bold">Exploring Penetration Testing, Cloud Security, and Advanced Forensics — where vulnerabilities become fortresses.</p>
+      <div class="flex">
+        <p><a href="#projects" class="cta btn-stretch">View Projects</a> </p>
+        <p><a href="#contact" class="btn btn-stretch">Contact Me</a></p>
+      </div>
+
+    </section>
+
+   <div class="orbit-container">
+    <div class="core">⚡</div>
+    <div class="orbit">
+      <div class="tool"><a href="https://www.wireshark.org/">Wireshark</a></div>
+      <div class="tool"><a href="https://nmap.org/">Nmap</a></div>
+      <div class="tool"><a href="https://portswigger.net/burp">Burp Suite</a></div>
+      <div class="tool"><a href="https://www.metasploit.com/">Metasploit</a></div>
+      <div class="tool"><a href="https://www.openwall.com/john/">John</a></div>
+      <div class="tool"><a href="https://www.kali.org/">Kali</a></div>
+    </div>
+   </div>
+
+    <section id="about" class="about">
+      <div class="about-sub-container">
+        <div class="sub-flex">
+         <div class="flex flex-row">
+          <p><img class="user" src="public/me.png" alt=""></p>
+          <h1 class="about-h1">About</h1>    
+         </div>
+        
+         <p><img class="my-img" src="public/user.png" alt="Hacker's Profile Picture"></p>
+       </div>
+
+       <div>
+          <p class="white-text">I’m <b>Ishaque</b>, a developer and cybersecurity practitioner dedicated to building interactive software and hardening digital systems. My focus bridges application and game development with core system defense—engineering functional, engaging experiences with security embedded from the ground up.
+        </p>
+        <p>
+          This site serves as my evolving logbook and proof of work. Through hands-on projects, formal write-ups, and continuous iteration, I document my progress across software development, game logic, and defensive security. It’s a space where learning meets execution as I build toward mastering both creation and protection.
+        </p>
+       </div>
+      </div>
+      
+      <div class="flex cta gap">
+        <button class="btn performance-first btn-stretch"><a href="#resume">View Resume</a></button>
+        <button class="btn clean-code btn-stretch"><a href="#projects">Check Projects</a></button>
+        <button class="btn modern-stack btn-stretch"><a href="#blog">View Skills</a></button>
+        <button class="btn open-source btn-stretch"><a href="#contact">Get in Touch</a></button>
+      </div>
+    </section>
+
+    <section id="projects" class="section">
+      <h2>Projects</h2>
+      <div class="cards">
+        <article class="card">
+          <h3>Project One</h3>
+          <p>Short description. Tech stack, link, and highlights.</p>
+          <a class="btn" href="#">View</a>
+        </article>
+
+        <article class="card">
+          <h3>Project Two</h3>
+          <p>Short description and links.</p>
+          <a class="btn" href="#">View</a>
+        </article>
+      </div>
+    </section>
+
+    <h1>Blog</h1>
+    <section id="blog" class="blog">
+      
+      <div class="blog-1">
+     
+      
+    </section>
+
+    <section id="contact" class="section">
+      <h2>Contact</h2>
+      <p>Email: <a href="mailto:ohenebaonedon2@email.com">ohenebaonedon2@email.com</a></p>
+
+      <form class="contact-form" id="contactForm">
+        <input id="contactName" name="name" type="text" placeholder="Name" maxlength="100" autocomplete="name" required>
+        <input id="contactEmail" name="email" type="email" placeholder="Email" maxlength="254" autocomplete="email" required>
+        <textarea id="contactMessage" name="message" placeholder="Message" rows="4" maxlength="5000" required></textarea>
+        <button type="submit">Send message</button>
+        <p id="contactStatus" class="contact-status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section id="resume" class="section">
+      <h2>Resume</h2>
+      <a class="btn" href="#">Download Resume (PDF)</a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>© <span id="year"></span> Don — Built with ❤️</p>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
