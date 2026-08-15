@@ -1,0 +1,9 @@
+{
+  "name": "de-journey-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Portfolio site with a Vercel contact API backed by Neon Postgres.",
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.2"
+  }
+}

@@ -449,7 +449,7 @@ background: linear-gradient(100deg, #0d9488, #111827);
 
 .section,
 .blog {
-  max-width: 1000px;
+  width: auto;
   margin: 0 auto 120px;
   padding: 0 24px;
 }
@@ -476,6 +476,8 @@ main>h1 {
 .card {
   padding: 24px;
   border-radius: 14px;
+  display: flex;
+  flex-direction: column;
 }
 
 .card h3 {
@@ -485,6 +487,60 @@ main>h1 {
 .card p {
   color: var(--muted);
 }
+
+.project-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  transition: transform .55s cubic-bezier(.2, .75, .25, 1), filter .55s ease;
+}
+
+.project-link {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin-top: auto;
+  overflow: hidden;
+  border: 1px solid var(--accent);
+  border-radius: 9px;
+  aspect-ratio: 16 / 9;
+  background: var(--solid);
+  box-shadow: 0 0 0 transparent;
+  isolation: isolate;
+  transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease;
+}
+
+.project-link::after {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, .34) 49%, rgba(69, 217, 255, .2) 54%, transparent 65%);
+  transform: translateX(-75%) rotate(8deg);
+  transition: transform .7s cubic-bezier(.2, .75, .25, 1);
+}
+
+.project-link:hover,
+.project-link:focus-visible {
+  border-color: var(--violet);
+  box-shadow: 0 14px 30px var(--glow), 0 0 22px rgba(158, 124, 255, .28);
+  transform: translateY(-5px);
+}
+
+.project-link:hover .project-img,
+.project-link:focus-visible .project-img {
+  filter: saturate(1.15) contrast(1.05) brightness(1.08);
+  transform: scale(1.08);
+}
+
+.project-link:hover::after,
+.project-link:focus-visible::after {
+  transform: translateX(75%) rotate(8deg);
+}
+
 
 .blog-1 {
   padding: clamp(20px, 5vw, 44px);
@@ -566,7 +622,7 @@ main>h1 {
   font-size: .9rem;
 }
 
-@media (max-width: 830px) {
+@media (max-width: 880px) {
   .site-header {
     top: 8px;
     margin-top: 8px;
@@ -584,6 +640,11 @@ main>h1 {
     border-radius: 14px;
     background: var(--solid);
     box-shadow: var(--shadow);
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
   .nav.active {
@@ -631,6 +692,10 @@ main>h1 {
 
 @media (max-width: 550px) {
   body {
+    width: 100%;
+  }
+
+  .card {
     width: 100%;
   }
 
