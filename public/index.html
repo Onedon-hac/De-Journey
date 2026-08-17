@@ -9,6 +9,11 @@
   <link rel="icon" href="favicon.svg" type="image/x-icon">
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
+  <script src="https://unpkg.com/mammoth@1.8.0/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 
 <body>
@@ -22,6 +27,7 @@
       <a href="#home" class="gradient-1">Home</a>
       <a href="#about" class="gradient-1">About</a>
       <a href="#projects" class="gradient-1">Projects</a>
+      <a href="#tools" class="gradient-1">Tools</a>
       <a href="#blog" class="gradient-1">Blog</a>
       <a href="#contact" class="gradient-1">Contact</a>
       <a href="#resume" class="gradient-1">Resume</a>
@@ -117,17 +123,84 @@
       </div>
     </section>
 
-    <section id="contact" class="section">
-      <h2>Contact</h2>
-      <p>Email: <a href="mailto:ohenebaonedon2@email.com">ohenebaonedon2@email.com</a></p>
+    <section id="tools" class="section creative-tools" aria-labelledby="tools-title">
+      <p class="eyebrow">Utilities</p>
+      <h2 id="tools-title">Creative <em>Tools.</em></h2>
+      <p class="tools-intro">Useful browser-based utilities for creating, exploring, and converting.</p>
 
-      <form class="contact-form" id="contactForm">
-        <input id="contactName" name="name" type="text" placeholder="Name" maxlength="100" autocomplete="name" required>
-        <input id="contactEmail" name="email" type="email" placeholder="Email" maxlength="254" autocomplete="email" required>
-        <textarea id="contactMessage" name="message" placeholder="Message" rows="4" maxlength="5000" required></textarea>
-        <button type="submit">Send message</button>
-        <p id="contactStatus" class="contact-status" role="status" aria-live="polite"></p>
-      </form>
+      <div class="storage-meter" aria-label="Local storage usage">
+        <div><span class="storage-icon" aria-hidden="true">◉</span> Local storage</div>
+        <span id="storageUsage">0 KB used</span>
+        <div class="storage-track" aria-hidden="true"><span id="storageFill"></span></div>
+      </div>
+
+      <div class="tool-picker" role="tablist" aria-label="Creative tools">
+        <div class="tool-choice"><button class="tool-card is-selected" type="button" role="tab" aria-selected="true" aria-controls="imageTool" data-tool="imageTool"><span>▧</span><strong>Image Generator</strong><small>Create an AI image from a prompt</small></button><a href="image-generator.html">Open full screen ↗</a></div>
+        <div class="tool-choice"><button class="tool-card" type="button" role="tab" aria-selected="false" aria-controls="paletteTool" data-tool="paletteTool"><span>◌</span><strong>Color Palette</strong><small>Create and copy color schemes</small></button><a href="color-palette.html">Open full screen ↗</a></div>
+        <div class="tool-choice"><button class="tool-card" type="button" role="tab" aria-selected="false" aria-controls="chatTool" data-tool="chatTool"><span>◯</span><strong>AI Chatbot</strong><small>Brainstorm with an assistant</small></button><a href="ai-chat.html">Open full screen ↗</a></div>
+        <div class="tool-choice"><button class="tool-card" type="button" role="tab" aria-selected="false" aria-controls="fileTool" data-tool="fileTool"><span>▤</span><strong>File Converter</strong><small>Convert documents and images</small></button><a href="file-converter.html">Open full screen ↗</a></div>
+      </div>
+
+      <div class="tools-workspace">
+        <div class="tool-panel is-active" id="imageTool" role="tabpanel">
+          <div class="tool-panel-heading"><h3><span>▧</span> Image Generator</h3><a href="image-generator.html">Open full page ↗</a></div>
+          <div class="image-tool-content">
+            <div>
+              <label for="imagePrompt">Creative prompt</label>
+              <textarea id="imagePrompt" rows="3" placeholder="Describe a mood, place, or idea…"></textarea>
+              <div class="tool-actions"><button class="secondary-tool-button" id="randomPrompt" type="button">Random prompt</button><button class="primary-tool-button" id="generateArt" type="button">⚡ Generate image</button></div>
+            </div>
+            <div class="art-preview"><img id="generatedImage" alt="AI generated artwork"><p id="artEmpty">Your generated image will appear here.</p></div>
+          </div>
+        </div>
+
+        <div class="tool-panel" id="paletteTool" role="tabpanel" hidden>
+          <div class="tool-panel-heading"><h3><span>◌</span> Color Palette</h3><a href="color-palette.html">Open full page ↗</a></div>
+          <p class="panel-copy">Click a color to copy its hex code.</p><div class="palette-swatches" id="paletteSwatches"></div><p class="tool-feedback" id="paletteFeedback" aria-live="polite"></p>
+        </div>
+
+        <div class="tool-panel" id="chatTool" role="tabpanel" hidden>
+          <div class="tool-panel-heading"><h3><span>◯</span> Creative Chat</h3><a href="ai-chat.html">Open full page ↗</a></div>
+          <div class="chat-log" id="chatLog" aria-live="polite"><p><b>Creative assistant</b><br>What would you like to make today?</p></div>
+          <form class="chat-form" id="chatForm"><input id="chatInput" placeholder="Ask for a creative idea…" required><button class="primary-tool-button" type="submit">Send</button></form>
+        </div>
+
+        <div class="tool-panel" id="fileTool" role="tabpanel" hidden>
+          <div class="tool-panel-heading"><h3><span>▤</span> File Converter</h3><a href="file-converter.html">Open full page ↗</a></div>
+          <div class="converter-controls"><label class="file-drop" for="fileInput"><input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,application/pdf,.docx,.xlsx,.xls,text/plain,text/csv,application/json" hidden><strong id="fileLabel">Choose a file</strong><span>PDF, Word, Excel, images, TXT, CSV, and JSON stay in your browser.</span></label><label for="convertFormat">Convert to<select id="convertFormat" disabled><option value="png">PNG image</option><option value="jpeg">JPEG image</option><option value="webp">WebP image</option><option value="txt">Plain text</option></select></label></div><div class="tool-actions"><button class="primary-tool-button" id="convertFile" type="button" disabled>Convert & download</button></div><p class="converter-note">Document conversions preserve extracted text and tables; complex layouts, images, and editing features may not transfer exactly.</p><p class="tool-feedback" id="fileFeedback" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section connect-section" aria-labelledby="connect-title">
+      <div class="connect-heading">
+        <p class="eyebrow">Open channel</p>
+        <h2 id="connect-title">Let's Connect</h2>
+        <p>Initiate a connection sequence via the digital void.</p>
+      </div>
+      <div class="connect-layout">
+        <div class="signal-visual" aria-hidden="true">
+          <div class="signal-orbit signal-orbit-one"></div><div class="signal-orbit signal-orbit-two"></div>
+          <div class="signal-core"></div><i class="signal-node node-one"></i><i class="signal-node node-two"></i><i class="signal-node node-three"></i>
+          <div class="signal-line"></div><p>☼ Signal strength: <span>online</span></p><div class="signal-bar"><span></span></div>
+        </div>
+        <div class="connect-content">
+          <form class="contact-form connect-form" id="contactForm">
+            <label for="contactName">♙ &nbsp;Name<input id="contactName" name="name" type="text" placeholder="Your name" maxlength="100" autocomplete="name" required></label>
+            <label for="contactEmail">✉ &nbsp;Email<input id="contactEmail" name="email" type="email" placeholder="example@email.com" maxlength="254" autocomplete="email" required></label>
+            <label for="contactMessage">▢ &nbsp;Message<textarea id="contactMessage" name="message" placeholder="What's on your mind?" rows="5" maxlength="5000" required></textarea></label>
+            <button type="submit">➤ &nbsp; Send message</button>
+            <p id="contactStatus" class="contact-status" role="status" aria-live="polite"></p>
+          </form>
+          <div class="connect-via"><p>Or connect via:</p><div class="connect-links">
+            <a class="connect-link github" href="https://github.com/Onedon-hac" target="_blank" rel="noreferrer"><span>◉</span><b>GitHub<small>@Onedon-hac</small></b><i>↗</i></a>
+            <a class="connect-link linkedin" href="https://www.linkedin.com/in/ishaque-osman" target="_blank" rel="noreferrer"><span>in</span><b>LinkedIn<small>Professional profile</small></b><i>↗</i></a>
+            <a class="connect-link email" href="mailto:ohenebaonedon2@gmail.com"><span>✉</span><b>Email<small>ohenebaonedon2@gmail.com</small></b><i>↗</i></a>
+            <a class="connect-link whatsapp" href="https://wa.me/917087298148?text=Hello%20Ishaque%2C%20I%20found%20your%20portfolio." target="_blank" rel="noreferrer" aria-label="Message Ishaque on WhatsApp"><span>◉</span><b>WhatsApp<small>+91 7087298148</small></b><i>↗</i></a>
+            <a class="connect-link instagram" href="https://www.instagram.com/bhardrichy/" aria-label="Instagram link needs your profile URL"><span>◎</span><b>Instagram<small>@bhardrichy</small></b><i>↗</i></a>
+          </div></div>
+        </div>
+      </div>
     </section>
 
     <section id="resume" class="section">
