@@ -505,7 +505,8 @@ main>h1 {
   overflow: hidden;
   border: 1px solid var(--accent);
   border-radius: 9px;
-  aspect-ratio: 16 / 9;
+  /* aspect-ratio: 16 / 9; */
+  min-height: 0; /* Required for aspect-ratio to work correctly in a flex container */
   background: var(--solid);
   box-shadow: 0 0 0 transparent;
   isolation: isolate;
@@ -541,54 +542,17 @@ main>h1 {
   transform: translateX(75%) rotate(8deg);
 }
 
-.project-img.is-changing {
-  opacity: 0;
+.ops {
+  opacity: 0.4;
 }
 
-.project-dots {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  z-index: 2;
-  display: flex;
-  gap: 5px;
+.project-a {
+  color: rgb(66, 66, 238);
+  font-style: italic;
 }
 
-.project-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, .5);
-  box-shadow: 0 0 6px rgba(0, 0, 0, .35);
-  transition: width .25s ease, background .25s ease;
-}
-
-.project-dot.is-active {
-  width: 20px;
-  background: var(--accent);
-}
-
-
-.blog-1 {
-  padding: clamp(20px, 5vw, 44px);
-  border-radius: 18px;
-  color: var(--muted);
-}
-
-.blog-1 h2,
-.blog-1 h3 {
-  color: var(--text);
-  line-height: 1.25;
-}
-
-.blog-1 li {
-  margin-top: 14px;
-  color: var(--text);
-}
-
-.blog-1 dl {
-  margin: 5px 0;
-  color: var(--muted);
+.project-a:hover {
+  transition: transform .3s;
 }
 
 .contact-form {

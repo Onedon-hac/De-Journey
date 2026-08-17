@@ -58,67 +58,6 @@
       menu?.setAttribute('aria-expanded', 'false');
     }));
 
-    document.querySelectorAll('[data-project-carousel]').forEach(carousel => {
-      const image = carousel.querySelector('.project-img');
-      const dots = carousel.querySelector('.project-dots');
-      const sources = (carousel.dataset.images || image?.getAttribute('src') || '')
-        .split(',')
-        .map(source => source.trim())
-        .filter(Boolean);
-
-      if (!image || sources.length < 2) return;
-
-      const loadImage = source => new Promise(resolve => {
-        const preview = new Image();
-        preview.onload = () => resolve(source);
-        preview.onerror = () => resolve(null);
-        preview.src = source;
-      });
-
-      Promise.all(sources.map(loadImage)).then(loadedSources => {
-        const slides = loadedSources.filter(Boolean);
-        if (slides.length < 2) return;
-
-        let currentSlide = 0;
-        let timer;
-        const updateDots = () => {
-          dots.innerHTML = slides.map((_, index) =>
-            `<span class="project-dot${index === currentSlide ? ' is-active' : ''}"></span>`
-          ).join('');
-        };
-        const showSlide = index => {
-          image.classList.add('is-changing');
-          window.setTimeout(() => {
-            currentSlide = index;
-            image.src = slides[currentSlide];
-            updateDots();
-            image.classList.remove('is-changing');
-          }, 240);
-        };
-        const scheduleNext = () => {
-          timer = window.setTimeout(() => {
-            showSlide((currentSlide + 1) % slides.length);
-            scheduleNext();
-          }, 4500);
-        };
-        const pause = () => window.clearTimeout(timer);
-        const resume = () => {
-          pause();
-          scheduleNext();
-        };
-
-        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        updateDots();
-        if (reducedMotion) return;
-
-        scheduleNext();
-        carousel.addEventListener('mouseenter', pause);
-        carousel.addEventListener('mouseleave', resume);
-        carousel.addEventListener('focusin', pause);
-        carousel.addEventListener('focusout', resume);
-      });
-    });
-
     document.getElementById('contactForm')?.addEventListener('submit', async event => {
       event.preventDefault();
       const form = event.currentTarget;
