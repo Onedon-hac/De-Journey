@@ -2,14 +2,23 @@
   const host = document.getElementById('fullTool');
   const type = document.body.dataset.fullTool;
   if (!host) return;
+  if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   const heading = (title, action = '') => `<div class="tool-panel-heading"><h3>${title}</h3>${action}</div>`;
   const escape = value => value.replace(/[<>&]/g, char => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' })[char]);
+  const readJsonResponse = async response => {
+    const text = await response.text();
+    try {
+      return text ? JSON.parse(text) : {};
+    } catch {
+      return {};
+    }
+  };
 
   if (type === 'image') {
     host.innerHTML = `<div class="tool-panel">${heading('<span>▧</span> Image Generator')}<div class="image-tool-content"><div><label for="prompt">Creative prompt</label><textarea id="prompt" rows="8" placeholder="Describe the image you want to generate…"></textarea><div class="tool-actions"><button id="random" class="secondary-tool-button" type="button">Random prompt</button><button id="generate" class="primary-tool-button" type="button">⚡ Generate image</button></div></div><div class="art-preview"><img id="image" alt="AI generated artwork"><p id="status">Your generated image will appear here.</p></div></div></div>`;
     const ideas = ['a neon city reflecting in rain', 'an abstract ocean made of glass', 'a quiet cyberpunk garden at midnight', 'a golden desert under two moons'];
     document.getElementById('random').onclick = () => document.getElementById('prompt').value = ideas[Math.floor(Math.random() * ideas.length)];
-    document.getElementById('generate').onclick = async event => { const prompt = document.getElementById('prompt').value.trim(); const status = document.getElementById('status'); if (!prompt) { status.textContent = 'Please enter a prompt first.'; return; } event.currentTarget.disabled = true; event.currentTarget.textContent = 'Generating…'; status.hidden = false; status.textContent = 'Generating your image…'; try { const response = await fetch('/api/image', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt }) }); const data = await response.json(); if (!response.ok) throw new Error(data.error); const image = document.getElementById('image'); image.src = data.image; image.classList.add('is-visible'); status.hidden = true; } catch (error) { status.textContent = error.message || 'Unable to generate an image.'; } finally { event.currentTarget.disabled = false; event.currentTarget.textContent = '⚡ Generate image'; } };
+    document.getElementById('generate').onclick = async event => { const prompt = document.getElementById('prompt').value.trim(); const status = document.getElementById('status'); if (!prompt) { status.textContent = 'Please enter a prompt first.'; return; } event.currentTarget.disabled = true; event.currentTarget.textContent = 'Generating…'; status.hidden = false; status.textContent = 'Generating your image…'; try { const response = await fetch('/api/image', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt }) }); const data = await readJsonResponse(response); if (!response.ok) throw new Error(data.error || 'Unable to generate an image.'); const image = document.getElementById('image'); image.src = data.image; image.classList.add('is-visible'); status.hidden = true; } catch (error) { status.textContent = error.message || 'Unable to generate an image.'; } finally { event.currentTarget.disabled = false; event.currentTarget.textContent = '⚡ Generate image'; } };
   }
 
   if (type === 'palette') {
@@ -20,7 +29,7 @@
   if (type === 'chat') {
     host.innerHTML = `<div class="tool-panel">${heading('<span>◯</span> AI Chat')}<div class="chat-log" id="log"><p><b>Creative assistant</b><br>How can I help you today?</p></div><form class="chat-form" id="form"><input id="input" placeholder="Ask anything…" required><button class="primary-tool-button" type="submit">Send</button></form></div>`;
     const history = []; const add = (message, user = false) => { const paragraph = document.createElement('p'); if (user) paragraph.className = 'user-message'; if (!user) paragraph.innerHTML = '<b>Creative assistant</b><br>'; paragraph.append(document.createTextNode(message)); document.getElementById('log').append(paragraph); };
-    document.getElementById('form').onsubmit = async event => { event.preventDefault(); const input = document.getElementById('input'); const message = input.value.trim(); if (!message) return; const button = event.currentTarget.querySelector('button'); add(message, true); history.push({ role: 'user', content: message }); input.value = ''; button.disabled = true; button.textContent = 'Thinking…'; try { const response = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: history }) }); const data = await response.json(); if (!response.ok) throw new Error(data.error); add(data.message); history.push({ role: 'assistant', content: data.message }); } catch (error) { add(error.message || 'Unable to get a response.'); } finally { button.disabled = false; button.textContent = 'Send'; document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight; } };
+    document.getElementById('form').onsubmit = async event => { event.preventDefault(); const input = document.getElementById('input'); const message = input.value.trim(); if (!message) return; const button = event.currentTarget.querySelector('button'); add(message, true); history.push({ role: 'user', content: message }); input.value = ''; button.disabled = true; button.textContent = 'Thinking…'; try { const response = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: history }) }); const data = await readJsonResponse(response); if (!response.ok) throw new Error(data.error || 'Unable to get a response.'); add(data.message); history.push({ role: 'assistant', content: data.message }); } catch (error) { add(error.message || 'Unable to get a response.'); } finally { button.disabled = false; button.textContent = 'Send'; document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight; } };
   }
 
   if (type === 'file') {
