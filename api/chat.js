@@ -19,16 +19,25 @@ module.exports = async (request, response) => {
     response.setHeader('Allow', 'POST');
     return sendJson(response, 405, { error: 'Method not allowed.' });
   }
+<<<<<<< HEAD
   if (!process.env.NVIDIA_API_KEY) return sendJson(response, 503, { error: 'AI chat is not configured yet.' });
+=======
+
+  // Uses your new Vercel variable (or falls back to OPENAI_API_KEY if you re-used it)
+  const apiKey = process.env.NVIDIA_API_KEY || process.env.OPENAI_API_KEY;
+  if (!apiKey) return sendJson(response, 503, { error: 'AI tools are not configured yet.' });
+>>>>>>> 3539e3810eda77eb088cd3bdf5ecc05f1d00d8ff
 
   const messages = Array.isArray(request.body?.messages) ? request.body.messages.slice(-12) : [];
   const safeMessages = messages
     .filter(message => ['user', 'assistant'].includes(message?.role) && typeof message.content === 'string')
     .map(message => ({ role: message.role, content: message.content.trim().slice(0, MAX_MESSAGE_LENGTH) }))
     .filter(message => message.content);
+
   if (!safeMessages.length) return sendJson(response, 400, { error: 'Enter a message to start chatting.' });
 
   try {
+<<<<<<< HEAD
     const apiResponse = await fetch(NVIDIA_CHAT_URL, {
       method: 'POST',
       headers: {
@@ -52,6 +61,27 @@ module.exports = async (request, response) => {
     const message = data.choices?.[0]?.message?.content;
     if (typeof message !== 'string' || !message.trim()) throw new Error('The AI service returned an empty response.');
     return sendJson(response, 200, { message });
+=======
+    // Points to NVIDIA NIM OpenAI-compatible chat completions endpoint
+    const apiResponse = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json', 
+        Authorization: `Bearer ${apiKey}` 
+      },
+      body: JSON.stringify({ 
+        model: process.env.NVIDIA_CHAT_MODEL || 'deepseek-ai/deepseek-r1', 
+        messages: safeMessages 
+      })
+    });
+
+    const data = await apiResponse.json();
+    if (!apiResponse.ok) throw new Error(data.error?.message || 'The AI service could not respond.');
+
+    // Extracts message content from NVIDIA's response structure
+    const replyText = data.choices?.[0]?.message?.content || 'I could not generate a response.';
+    return sendJson(response, 200, { message: replyText });
+>>>>>>> 3539e3810eda77eb088cd3bdf5ecc05f1d00d8ff
   } catch (error) {
     console.error('NVIDIA chat request failed:', error);
     return sendJson(response, 502, { error: error.message || 'The AI service is unavailable.' });
