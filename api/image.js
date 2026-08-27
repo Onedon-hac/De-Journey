@@ -8,7 +8,6 @@ module.exports = async (request, response) => {
     return sendJson(response, 405, { error: 'Method not allowed.' });
   }
 
-  // Uses your NVIDIA API key (or falls back to OPENAI_API_KEY)
   const apiKey = process.env.NVIDIA_API_KEY || process.env.OPENAI_API_KEY;
   if (!apiKey) return sendJson(response, 503, { error: 'AI tools are not configured yet.' });
 
@@ -16,27 +15,25 @@ module.exports = async (request, response) => {
   if (!prompt) return sendJson(response, 400, { error: 'Describe the image you want to create.' });
 
   try {
-    // Calls NVIDIA NIM's Stable Diffusion XL endpoint
     const apiResponse = await fetch('https://ai.api.nvidia.com/v1/genai/stabilityai/stable-diffusion-xl', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-        Accept: 'application/json'
+        'Authorization': `Bearer ${apiKey}`,
+        'Accept': 'application/json'
       },
       body: JSON.stringify({
-        text_prompts: [{ text: prompt, weight: 1 }],
-        cfg_scale: 5,
-        sampler: 'K_DPM_2_ANCESTRAL',
-        steps: 25,
-        seed: 0
+        text_prompts: [{ text: prompt }]
       })
     });
 
     const data = await apiResponse.json();
-    if (!apiResponse.ok) throw new Error(data.message || data.error?.message || 'The image service could not respond.');
 
-    // NVIDIA NIM returns base64 image data inside data.artifacts[0].base64
+    if (!apiResponse.ok) {
+      console.error('NVIDIA Error Response:', data);
+      throw new Error(data.message || data.detail || 'The image service could not respond.');
+    }
+
     const imageBase64 = data.artifacts?.[0]?.base64;
     if (!imageBase64) throw new Error('No image was returned from NVIDIA NIM.');
 
